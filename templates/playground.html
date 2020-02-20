@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load staticfiles %}
+
+{% block title %}Home{% endblock %}
+
+
+<!-- main -->
+{% block content %}
+{% if user.is_authenticated %}
+
+
+<div role="main" class="container">
+  <div class="jumbotron">
+    <h2>Hi {{ user.username }}! Welcome to Orange playground!</h2>
+  </div>
+
+  <div class="row">
+    {% for game in games %}
+    <div class="card col-lg-3 col-md-4 col-xs-12">
+      <div class="card-body" href="home">
+        {% include 'show_game_card.html' %}
+        {% if game not in user.games.all %}
+        <p class="card-text">{{ game.price }} €</p>
+        <a href="{% url 'pay_redirect' price=game.price user_id=user.id game_id=game.id %}"
+          class="btn btn-primary float-right"> Buy </a>
+        {% else %}
+        <p class="card-text">Score: {{ game.globalScore }} </p>
+        <a href="{% url 'game-play' game.id  %}" class="btn btn-success float-right"> Play </a>
+
+        {% endif %}
+        <a href="https://twitter.com/intent/tweet?url=https://orange2020.herokuapp.com/games/{{ game.id }}/info"
+        class="btn btn-primary btn-social btn-twitter ml-2">
+        <span class="fa fa-twitter">Share</span>
+        </a>
+        <a href="{% url 'game_info' game.id  %}" class="btn btn-secondary float-left"> Info </a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% else %}
+{% include "not_login.html" %}
+{% endif %}
+{% endblock %}
+

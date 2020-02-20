@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+
+{% load staticfiles %}
+{% block title %}Game{% endblock %}
+
+
+<!-- main -->
+{% block content %}
+<div role="main" class="container">
+  <div class="jumbotron">
+    <h2>Welcome to Orange!</h2>
+    <div class="row mt-5">
+      <div class="col-md-4 col-sm-12">
+        <img src="https://i.imgur.com/6w6tVlX.png" alt="{{ game.name }}">
+      </div>
+      <div class="col-md-8 col-sm-12">
+        <h3 class="font-weight-bolder">{{ game.name }}</h3>
+        <h5 class="font-weight-normal mt-3">Game type: {{ game.category }}</h5>
+        <h5 class="font-weight-normal">developer: {{ game.developer }}</h5>
+        <h5 class="font-weight-normal">upload date: {{ game.uploadDate }}</h5>
+        <h5 class="font-weight-normal">description: {{ game.description }}</h5>
+        <h5 class="font-weight-normal">sales: {{ game.sales }}</h5>
+        <h5 class="font-weight-normal">Highest scores: {{ game.globalScore }}</h5>
+        {% if user.is_authenticated %}
+        {% if game not in user.games.all %}
+        <a href="{% url 'pay_redirect' price=game.price user_id=user.id game_id=game.id %}" class="btn btn-primary"> Buy
+        </a>
+        {% else %}
+        <a href="{% url 'game-play' game.id  %}" class="btn btn-primary"> Play </a>
+        {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

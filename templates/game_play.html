@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block content %}
+
+{% if game in games %}
+<script type="text/javascript">
+// reference https://docs.djangoproject.com/en/3.0/ref/csrf/
+function getCookie(name) {
+    'use strict';
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            // var cookie = jQuery.trim(cookies[i]);
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+function csrfSafeMethod(method) {
+    'use strict';
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+var csrftoken = getCookie('csrftoken');
+$.ajaxSetup({
+    beforeSend: function (xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+</script>
+<script type="text/javascript">
+// reference: https://version.aalto.fi/gitlab/oseppala/wsd2019/blob/master/examples/example_game.html#L17
+// reference: https://github.com/mishinma/wsdproject/blob/6ee8d3904a09bdfd9984e93e96720cb521deed59/community/static/community/game-service.js#L39
+$(document).ready(function () {
+    "use strict";
+    window.addEventListener("message", function (evt) {
+        switch (evt.data.messageType){
+            case "SCORE":
+                $.ajax({
+                    method: "POST",
+                    data: evt.data,
+                    dataType: 'json',
+                    success: update_score,
+                    error: error_alert
+                });
+                break;
+            case "SAVE":
+                var data = {
+                    messageType: evt.data.messageType,
+                    gameState: JSON.stringify(evt.data.gameState)
+                };
+                $.ajax({
+                    method: "POST",
+                    data: data,
+                    error: error_alert
+                });
+                break;
+            case "LOAD_REQUEST":
+                $.ajax({
+                    method: "POST",
+                    data: evt.data,
+                    dataType: 'json',
+                    success: load_game,
+                    error: error_alert
+                });
+                break;
+            case "SETTING":
+                var options = evt.data.options;
+                options.visibility = 'visible';
+                $("#gameIframe").css(options);
+                break;
+
+            default:
+                console.log('Message type not supported');
+        }
+    });
+});
+
+function error_alert(jqXHR, exception)  {
+    'use strict';
+    var msg = {
+        "messageType": "ERROR",
+        "info": jqXHR.responseText
+    };
+    var gameIframe = $("#gameIframe")[0];
+    gameIframe.contentWindow.postMessage(msg, gameIframe.src);
+}
+
+function update_score(data) {
+    'use strict';
+    $("#myBestScore").text(data.myBestScore);
+    $("#globalBestScore").text(data.globalBestScore);
+}
+
+function load_game(data) {
+    'use strict';
+     var msg = {
+         "messageType": "LOAD",
+         "gameState": data
+     };
+     var gameIframe = $("#gameIframe")[0];
+     gameIframe.contentWindow.postMessage(msg, gameIframe.src);
+}
+</script>
+
+<div role="main" class="container">
+    <div class="jumbotron">
+        <div class="row">
+            <div class="col-xl-8 col-md-12">
+                <h3>{{ game.name }}</h3>
+                <iframe id="gameIframe" class="border border-dark rounded" src='{{ game.content }}' frameborder="0"
+                    height="500px" width="100%"></iframe>
+            </div>
+            <div class="col-xl-4 col-md-12 mt-5">
+                <h4>My best score:
+                    <span>
+                        <ul>
+                            <li id="myBestScore">{{ my_score.score }} </li>
+                        </ul>
+
+                    </span>
+                </h4>
+                <h4>Global best score:
+                    <span>
+                        <ul>
+                            <li id="globalBestScore">{{ game.globalScore }}</li>
+                        </ul>
+                    </span>
+                </h4>
+            </div>
+        </div>
+
+        <div class="row mt-2 ml-1">
+            <div class="col-xs-12">
+                <h5>Game Description</h5>
+                <p>{{ game.description }}</p>
+            </div>
+        </div>
+
+        <div class="row mt-5 ml-5">
+            <div class="col-xs-12">
+                <h5>AD</h5>
+                <ul>
+                    <li>Coming soon</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-5 ml-5">
+        <div class="col-xs-12">
+            <h5>Game Reviews</h5>
+            <ul>
+                <li>Coming soon</li>
+            </ul>
+            <ul>
+                {% for review in reviews %}
+                <li>{{ game.review}}</li>
+                {% endfor%}
+            </ul>
+        </div>
+    </div>
+</div>
+{% else %}
+<script>{ alert("Oops! There is no such thing as a Free Lunch! Please buy this game :)") }</script>
+{% endif %}
+{% endblock %}

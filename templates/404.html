@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+
+<!-- main -->
+{% block content %}
+<div role="main" class="container">
+    <div class="jumbotron">
+        <h5>404 Page not found</h5>
+    </div>
+</div>
+{% if user.is_authenticated %}
+{% else %}
+{% include "not_login.html" %}
+{% endif %}
+{% endblock %}

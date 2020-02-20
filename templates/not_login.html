@@ -1,0 +1,9 @@
+{% load socialaccount %}
+<div role="main" class="container">
+    <div class="jumbotron">
+        <h2>Welcom to Orange!</h2>
+        <p class="lead">You are not logged in</p>
+        <a class="btn btn-lg btn-primary mb-2" href="{% url 'login' %}" role="button">login</a>
+        <p><a href="{% provider_login_url 'google' %}">Log In with Gmail</a></p>
+    </div>
+</div>

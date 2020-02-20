@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+
+{% block title %}Home{% endblock %}
+
+
+<!-- main -->
+{% block content %}
+{% if user.is_authenticated %}
+
+<div role="main" class="container">
+  <div class="jumbotron">
+    <h2>Payment failed, please try again</h2>
+  </div>
+</div>
+
+<iframe src="" frameborder="0"></iframe>
+
+{% else %}
+{% include "not_login.html" %}
+{% endif %}
+{% endblock %}

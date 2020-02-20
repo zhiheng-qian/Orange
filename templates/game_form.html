@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+{% if user.isDeveloper %}
+    {% if create %}
+        Create new game
+    {% else %}
+        Edit the game
+    {% endif %}
+{% else %}
+    Something Wrong :(
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% if user.isDeveloper %}
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12 col-md-7">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h3>{% if create %}
+                                Upload new game:
+                            {% else %}
+                                Edit the game:
+                            {% endif %}
+                        </h3>
+                        {% if not create %}
+                            <script type="text/javascript">
+                                $(document).ready(function() {
+                                    $('#submit').click( function () {
+                                        $.ajax({
+                                            headers:{"X-CSRFtoken":$.cookie("csrftoken")}，
+                                            //test above
+                                            type: "PUT",
+                                            data: $('#game_form').serialize(),
+                                            url: "{% url 'game-play' game %}"
+                                        });
+                                    });
+                                });
+                            </script>
+                        {% endif %}
+                        
+                        {% if create %}
+                        <form class="form-horizontal" method="POST" action="{% url 'games' %}" id="game_form">
+                            {% csrf_token %}
+                            {{ form | crispy }}
+                        {% else %}
+                        <form class="form-horizontal" method="POST" id="game_form">
+                            {% csrf_token %}
+                            {{ form | crispy }}
+                        {% endif%}                        
+                            <div class="form-group">
+                                <label class="control-label col-sm-2">{{ field.label_tag }}</label>
+                                <div class="col-sm-2">{{ field }}</div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-10">
+                                    <button id="submit" type="submit" class="btn btn-success">
+                                    {% if create %}
+                                        Upload
+                                    {% else %}
+                                        Save
+                                    {% endif %}
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% else %}
+<script>{ alert("Oops! You Have No Permission. Please Register as Developer!") }</script>
+{% endif %} 
+
+{% endblock %}

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Self Game</title>
+  <meta charset="utf-8"/>
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+
+  <script>
+
+  $(document).ready( function() {
+    "use strict";
+
+    var board = [0, 0, 0];
+    var points = 0;
+    updateItems();
+    $("#round").text("Please make a choice!(Win:+10 Lose:-5)");
+
+    $("#submit_score").click( function () {
+      var msg = {
+        "messageType": "SCORE",
+        "score": parseFloat($("#score").text())
+      };
+      window.parent.postMessage(msg, "*");
+    });
+
+    $("#save").click( function () {
+      var msg = {
+        "messageType": "SAVE",
+        "gameState": {
+          "board": board,
+          "score": parseFloat($("#score").text())
+        }
+      };
+      window.parent.postMessage(msg, "*");
+    });
+
+    $("#load").click( function () {
+      var msg = {
+        "messageType": "LOAD_REQUEST",
+      };
+      window.parent.postMessage(msg, "*");
+    });
+
+    window.addEventListener("message", function(evt) {
+      if(evt.data.messageType === "LOAD") {
+        var gameState = evt.data.gameState;
+        board = gameState.board;
+        points = parseFloat(gameState.score);
+        $("#score").text(points);
+        updateItems();
+      } else if (evt.data.messageType === "ERROR") {
+        alert(evt.data.info);
+      }
+    });
+
+    $("#Fist").click( function () {
+      var x = 0;
+      var n = Math.round(Math.random()*10);
+      n = n%3;
+      var sum = x-n;
+      if(sum == 0){
+        $("#round").text("You win in this round!");
+        board[0] ++;
+        $("#new_item").val("");
+        updateItems();
+        points += 10;
+        $("#score").text(points);
+      }else if(sum == -1 || sum == 2){
+        $("#round").text("You lose in this round!");
+        board[1] ++;
+        $("#new_item").val("");
+        updateItems();
+        points -= 5;
+        $("#score").text(points);
+      }else{
+        $("#round").text("You tie in this round!");
+        board[2] ++;
+        $("#new_item").val("");
+        updateItems();
+      }
+    });
+
+    $("#Scissors").click(function () {
+      var x = 1;
+      var n = Math.round(Math.random()*10);
+      n = n%3;
+      var sum = x-n;
+      if(sum == 0){
+        $("#round").text("You win in this round!");
+        board[0] ++;
+        $("#new_item").val("");
+        updateItems();
+        points += 10;
+        $("#score").text(points);
+      }else if(sum == -1 || sum == 2){
+        $("#round").text("You lose in this round!");
+        board[1] ++;
+        $("#new_item").val("");
+        updateItems();
+        points -= 5;
+        $("#score").text(points);
+      }else{
+        $("#round").text("You tie in this round!");
+        board[2] ++;
+        $("#new_item").val("");
+        updateItems();
+      }
+    });
+
+    $("#Paper").click(function () {
+      var x = 2;
+      var n = Math.round(Math.random()*10);
+      n = n%3;
+      var sum = x-n;
+      if(sum == 0){
+        $("#round").text("You win in this round!");
+        board[0] ++;
+        $("#new_item").val("");
+        updateItems();
+        points += 10;
+        $("#score").text(points);
+      }else if(sum == -1 || sum == 2){
+        $("#round").text("You lose in this round!");
+        board[1] ++;
+        $("#new_item").val("");
+        updateItems();
+        points -= 5;
+        $("#score").text(points);
+      }else{
+        $("#round").text("You tie in this round!");
+        board[2] ++;
+        $("#new_item").val("");
+        updateItems();
+      }
+    });
+
+
+    function updateItems() {
+      $("#board_show").html("");
+      var item = $("<li></li>").text("WIN: " + board[0]);
+      $("#board_show").append(item);
+      var item = $("<li></li>").text("LOSE: " + board[1]);
+      $("#board_show").append(item);
+      var item = $("<li></li>").text("TIE: " + board[2]);
+      $("#board_show").append(item);
+    }
+
+    var message =  {
+      messageType: "SETTING",
+      options: {
+        "width": 700, //Integer
+        "height": 300 //Integer
+        }
+    };
+    window.parent.postMessage(message, "*");
+  });
+
+  </script>
+</head>
+
+<body>
+  <button id="Fist">Choose Fist</button>
+  <button id="Scissors">Choose Scissors</button>
+  <button id="Paper">Choose Paper</button>
+
+  <h3 id="round"></h3>
+  <ul id="board_show"></ul>
+  <div><span  id="score">0</span> Points</div>
+
+  <button id="submit_score">Submit</button><br>
+  <button id="save">Save</button>
+  <button id="load">Load</button>
+</body>
+</html>

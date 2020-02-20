@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% load socialaccount %}
+{% load staticfiles %}
+{% block title %}Inventory{% endblock %}
+
+
+<!-- main -->
+{% block content %}
+
+{% if user.isDeveloper %}
+{% if user.is_authenticated %}
+<div role="main" class="container">
+  <div class="jumbotron">
+    <div class="row">
+      <div class="col-md-8">
+        <h2>Hi: {{ user.username }}, please upload more great games!</h2>
+      </div>
+      <div class="col-md-4">
+        <a class="btn btn-primary" href="{% url 'game_create'%}" role="button">Upload Game</a>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    {% for game in games %}
+    <div class="card col-lg-3 col-md-4 col-xs-12">
+      <div class="card-body" href="home">
+        {% include 'show_game_card.html' %}
+        <p class="card-text" id="income_{{ game.id }}">0</p>
+        <script>
+          document.getElementById('income_{{ game.id }}').innerHTML = "Income: " + "{{ game.price }}" * "{{ game.sales }}" + " €";
+        </script>
+        {% if game not in user.games.all %}
+        <p class="card-text">{{ game.price }} €</p>
+        <a href="{% url 'pay_redirect' price=game.price user_id=user.id game_id=game.id %}"
+          class="btn btn-primary float-right"> Buy </a>
+        {% else %}
+        <p class="card-text">Best score: {{ game.globalScore }} </p>
+        <div class="btn-group">
+          <a href="{% url 'game-play' game.id %}" class="btn btn-success">Play</a>
+          <a href="{% url 'game_edit' game.id %}" class="btn btn-primary">Edit</a>
+          <a href="{% url 'game_delete' game.id %}" class="btn btn-danger">DELETE</a>
+        </div>
+        {% endif %}
+        <a href="{% url 'game_info' game.id %}" class="btn btn-secondary mt-2">Info</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  {% include "not_login.html" %}
+  {% endif %}
+
+  {% else %}
+  <script>{ alert("Oops! Only Developers Have Access to This Page.") }</script>
+  {% endif %}
+
+  {% endblock %}

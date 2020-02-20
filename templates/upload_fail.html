@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block title %}Home{% endblock %}
+
+
+<!-- main -->
+{% block content %}
+<div role="main" class="container">
+    <div class="jumbotron">
+        <h5>Something wrong with form, please check all the fileds and make sure there are no same game and game url exists.</h5>
+    </div>
+</div>
+{% if user.is_authenticated %}
+{% else %}
+{% include "not_login.html" %}
+{% endif %}
+{% endblock %}

@@ -1,0 +1,5 @@
+{% load staticfiles %}
+<img src="{% url 'game_logo' game.id %}" alt="{{ game.name }}" class="card-img-top">
+<h5 class="card-title">{{ game.name }}</h5>
+<p class="card-text">Game type: {{ game.category }}</p>
+<p class="card-text">Sales: {{ game.sales }}</p>

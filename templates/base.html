@@ -1,0 +1,106 @@
+{% load socialaccount %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+
+  <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@Zhiheng_Qian">
+  <meta name="twitter:creator" content="@Zhiheng_Qian">
+  <meta name="twitter:title" content="Check out this game on orange!">
+  <meta name="twitter:description" content="{{ game.name }} - {{ game.description }}.">
+  <meta name="twitter:image" content="https://orange2020.herokuapp.com/games/{{ game.id }}/info/logo">
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+  <link href="https:////maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+    integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+    crossorigin="anonymous"></script>
+  <title>{% block title %}Orange{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="shortcut icon" href="https://i.imgur.com/6w6tVlX.png">
+</head>
+
+<body>
+
+  <!-- navbar -->
+  <header>
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+      <a class="navbar-brand" href="{% url 'home' %}" role="button">
+        <img class="logo" href="{% url 'home' %}" src="https://i.imgur.com/S3S1oNw.png" height="40" width="100"
+          role="button">
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+        aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'home' %}" role="button">Home <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'store' %}" role="button">Store</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'playground' %}" role="button">Playground</a>
+          </li>
+        </ul>
+
+        {% if user.is_authenticated %}
+        <ul class="navbar-nav navbar-right mr-2">
+          <li class="nav-item">
+            <p class="text-primary pt-2 mb-0">{{ user.username }}</p>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}" role="button">Logout</a>
+          </li>
+          {% if user.isDeveloper %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'inventory' %}" role="button">Inventory</a>
+          </li>
+          {% endif %}
+        </ul>
+        {% else %}
+        <ul class="navbar-nav navbar-right mr-2">
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}" role="button">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'signup' %}" role="button">Sign Up</a>
+          </li>
+        </ul>
+        {% endif %}
+        <form class="form-inline" method="GET" action="{% url 'search' %}">
+          <div class="input-group">
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search" id="keyWord"
+              name="keyWord">
+            <div class="input-group-btn">
+              <button class="btn btn-light" type="submit" style="height: 38px;">
+                <i style='font-size:24px' class='fas' style="height: 24px;">&#xf002;</i>
+              </button>
+            </div>
+          </div>
+          <!-- <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search<svg viewBox="0 0 8 8"><use xlink:href="#magnifying-glass"></use></svg></button> -->
+        </form>
+      </div>
+
+    </nav>
+  </header>
+  <!-- navbar end -->
+  <main>
+    {% block content %}
+    {% endblock %}
+  </main>
+
+</body>
+
+</html>
